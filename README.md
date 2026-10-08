@@ -7,7 +7,7 @@ Today `new WalletClient('auto')` connects to the first wallet that answers, and 
 It finds:
 
 - **Wallets that announce themselves** with the `brc100:announceWallet` event ([draft standard](docs/BRC-DRAFT-wallet-discovery.md)).
-- **Extensions that only set `window.CWI`**, named from their `getVersion()`.
+- **Extensions that only set `window.CWI`**, listed as "Browser wallet". Discovery never calls a wallet, so it never triggers a prompt.
 - **Desktop wallets** on `localhost:3321` and `localhost:2121` (BSV Desktop, Metanet Client and others).
 - **The host wallet** when the page is opened inside a wallet's in-app browser.
 

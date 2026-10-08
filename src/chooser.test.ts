@@ -18,12 +18,14 @@ describe('discovery', () => {
     expect(await collectAnnouncements(20)).toEqual([])
   })
 
-  it('lists an unannounced window.CWI once, named from its version', async () => {
-    const cwi = Object.assign(wallet(), { getVersion: async () => ({ version: 'yours-wallet-5.0.2' }) })
+  it('lists an unannounced window.CWI once, without calling it', async () => {
+    let called = false
+    const cwi = Object.assign(wallet(), { getVersion: async () => { called = true; return { version: 'yours-wallet-5.0.2' } } })
     ;(window as any).CWI = cwi
     const list = await discoverWallets({ announceMs: 20, probeLocal: false })
+    expect(called).toBe(false)
     expect(list).toHaveLength(1)
-    expect(list[0]).toMatchObject({ name: 'Yours Wallet', rdns: 'legacy.window-cwi', source: 'window.CWI' })
+    expect(list[0]).toMatchObject({ name: 'Browser wallet', rdns: 'legacy.window-cwi', source: 'window.CWI' })
 
     // Announced by its owner: shown once, under the announced name.
     const stop = announceWallet({ name: 'Yours', icon: '', rdns: 'org.yours', kind: 'extension' }, cwi)

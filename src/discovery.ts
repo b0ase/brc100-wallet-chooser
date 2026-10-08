@@ -126,11 +126,8 @@ export async function discoverWallets (opts: DiscoverOptions = {}): Promise<Disc
   // A window.CWI nobody announced (wallets that predate this BRC).
   const cwi = (window as unknown as { CWI?: WalletInterface }).CWI
   if (cwi != null && !list.some(w => w.wallet === cwi)) {
-    let name = 'Browser wallet'
-    try {
-      name = nameFromVersion((await withTimeout(cwi.getVersion({}), 1500)).version, name)
-    } catch { /* locked or slow */ }
-    list.push({ rdns: 'legacy.window-cwi', name, icon: null, kind: 'extension', wallet: cwi, source: 'window.CWI' })
+    // Not called here: some wallets prompt on any call from a new site, and discovery must never prompt.
+    list.push({ rdns: 'legacy.window-cwi', name: 'Browser wallet', icon: null, kind: 'extension', wallet: cwi, source: 'window.CWI' })
   }
 
   for (const w of await local) if (w != null) list.push(w)
