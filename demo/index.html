@@ -12,8 +12,9 @@
 </head>
 <body>
 <h1>BRC-100 Wallet Chooser</h1>
-<p>Two fake wallets announce themselves on this page. Any real extension, plus BSV Desktop or Metanet Client on <code>localhost:3321</code>, show up too.</p>
-<label><input type="checkbox" id="fakes" checked> Announce demo wallets</label>
+<p>Your real wallets show up here: browser extensions, plus BSV Desktop or Metanet Client if they're running on <code>localhost:3321</code>.</p>
+<p>To show the panel working on a machine with no wallets, this page also adds two <strong>test wallets</strong>. They exist only in this tab, use a throwaway random key, and hold no coins. Untick the box to hide them.</p>
+<label><input type="checkbox" id="fakes" checked> Show test wallets</label>
 <p><button id="connect">Connect wallet</button> <button id="switch">Switch wallet</button></p>
 <pre id="out"></pre>
 <script type="module">
@@ -30,7 +31,7 @@
   let stops = []
   const setFakes = (on) => {
     stops.forEach(s => s()); stops = []
-    if (on) stops = [fake('Demo Wallet A', 'example.demo.a', '#7c3aed'), fake('Demo Wallet B (locked)', 'example.demo.b', '#059669', true)]
+    if (on) stops = [fake('Test Wallet A', 'example.demo.a', '#7c3aed'), fake('Test Wallet B (locked)', 'example.demo.b', '#059669', true)]
   }
   setFakes(true)
   document.getElementById('fakes').onchange = (e) => setFakes(e.target.checked)
