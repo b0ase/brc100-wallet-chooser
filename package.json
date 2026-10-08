@@ -1,0 +1,26 @@
+{
+  "name": "brc100-wallet-chooser",
+  "version": "0.1.0",
+  "description": "Standard BRC-100 wallet chooser: discovers every wallet on the machine and lets the user pick one.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "sideEffects": ["./dist/index.js", "./dist/element.js"],
+  "scripts": {
+    "build": "tsc -p .",
+    "dev": "tsc -p . -w",
+    "demo": "pnpm build && vite demo --open",
+    "test": "vitest run"
+  },
+  "peerDependencies": { "@bsv/sdk": ">=1.6.0" },
+  "devDependencies": {
+    "@bsv/sdk": "^2.8.11",
+    "happy-dom": "^15.11.7",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.8"
+  },
+  "license": "MIT"
+}

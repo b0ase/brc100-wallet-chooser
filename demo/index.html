@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRC-100 Wallet Chooser</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 16px system-ui, sans-serif; max-width: 640px; margin: 48px auto; padding: 0 16px; }
+  button { font: inherit; padding: 10px 16px; border-radius: 10px; border: 1px solid #888; cursor: pointer; }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<h1>BRC-100 Wallet Chooser</h1>
+<p>Two fake wallets announce themselves on this page. Any real extension, plus BSV Desktop or Metanet Client on <code>localhost:3321</code>, show up too.</p>
+<label><input type="checkbox" id="fakes" checked> Announce demo wallets</label>
+<p><button id="connect">Connect wallet</button> <button id="switch">Switch wallet</button></p>
+<pre id="out"></pre>
+<script type="module">
+  import { connectWallet, switchWallet, announceWallet } from '../src/index.ts'
+  import { ProtoWallet, PrivateKey } from '@bsv/sdk'
+
+  const icon = (c) => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect width="96" height="96" rx="20" fill="${c}"/></svg>`)
+  const fake = (name, rdns, color, locked = false) => {
+    const w = new ProtoWallet(PrivateKey.fromRandom())
+    w.getVersion = async () => ({ version: rdns + '-0.0.1' })
+    if (locked) w.getPublicKey = async () => { throw new Error(`${name} is locked`) }
+    return announceWallet({ name, icon: icon(color), rdns, kind: 'extension' }, w)
+  }
+  let stops = []
+  const setFakes = (on) => {
+    stops.forEach(s => s()); stops = []
+    if (on) stops = [fake('Demo Wallet A', 'example.demo.a', '#7c3aed'), fake('Demo Wallet B (locked)', 'example.demo.b', '#059669', true)]
+  }
+  setFakes(true)
+  document.getElementById('fakes').onchange = (e) => setFakes(e.target.checked)
+
+  const out = document.getElementById('out')
+  const show = (p) => p.then(
+    (w) => { out.textContent = `Connected: ${w.name} (${w.kind})\nrdns: ${w.rdns}\nidentity key: ${w.identityKey}` },
+    (e) => { out.textContent = `Not connected: ${e.message}` })
+  document.getElementById('connect').onclick = () => show(connectWallet({ helpUrl: 'https://bsvblockchain.org' }))
+  document.getElementById('switch').onclick = () => show(switchWallet({ helpUrl: 'https://bsvblockchain.org' }))
+</script>
+</body>
+</html>
